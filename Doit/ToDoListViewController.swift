@@ -10,11 +10,16 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
+  let defaults = UserDefaults.standard
   var itemArray = ["wash car", "return pants", "buy beachball", "pet a junebug"]
 
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    if let items = defaults.array(forKey: "ToDoListArray") as? [String]{
+      itemArray = items
+    }
     
   }
   
@@ -54,6 +59,7 @@ class ToDoListViewController: UITableViewController {
       
       if textField.text != ""{
         self.itemArray.append(textField.text!)
+        self.defaults.set(self.itemArray, forKey: "ToDoListArray")
         self.tableView.reloadData()
       } else{
         action.isEnabled = false

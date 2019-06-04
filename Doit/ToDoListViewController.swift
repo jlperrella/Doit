@@ -18,7 +18,7 @@ class ToDoListViewController: UITableViewController {
     
   }
   
-  //MARK - Tableview Datasource Methods
+  //MARK: Tableview Datasource Methods
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return itemArray.count
@@ -31,7 +31,7 @@ class ToDoListViewController: UITableViewController {
   }
   
   
-  //MARK - Tabelview Delegate Methods
+  //MARK: Tabelview Delegate Methods
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     print(itemArray[indexPath.row])
@@ -43,5 +43,30 @@ class ToDoListViewController: UITableViewController {
     }
     tableView.deselectRow(at: indexPath, animated: true)
   }
+  
+  //MARK: Add To-Do Items
+  
+  @IBAction func addButtonPressed(_ sender: Any) {
+    
+    var alertTextField = ""
+    
+    let alert = UIAlertController(title: "Add Item", message: "", preferredStyle: .alert)
+    
+    let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+      print(alertTextField)
+    }
+    
+    alert.addTextField { (alertTextField) in
+      alertTextField.placeholder = "new to-do item"
+      print(alertTextField.text)
+    }
+    
+    alert.addAction(action)
+    
+    present(alert, animated: true, completion: nil)
+  }
+  
+  
+  
 }
 

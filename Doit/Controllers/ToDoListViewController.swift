@@ -7,25 +7,20 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
-  var itemArray = [ItemModel]()
+  var itemArray = [Item]()
  
    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+ 
+   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    print(dataFilePath)
-    
-    let newItem = ItemModel()
-    newItem.title = "pet cat"
-    itemArray.append(newItem)
-    
-//    if let items = defaults.array(forKey: "ToDoListArray") as? [ItemModel]{
-//      itemArray = items
-//    }
+    //print(dataFilePath)
    
    loadItems()
   }
@@ -48,8 +43,15 @@ class ToDoListViewController: UITableViewController {
   //MARK: Tabelview Delegate Methods
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
    itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+   
+//   //Code to Delete
+//   context.delete(itemArray[indexPath.row])
+//   itemArray.remove(at: indexPath.row)
+  
    saveItems()
+    
    tableView.deselectRow(at: indexPath, animated: true)
   }
   
@@ -62,10 +64,12 @@ class ToDoListViewController: UITableViewController {
    
    let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
       if textField.text != ""{
-        
-        let newItem = ItemModel()
+       
+       
+        let newItem = Item(context: self.context)
         
         newItem.title = textField.text!
+        newItem.done = false
         
         self.itemArray.append(newItem)
         
@@ -91,31 +95,43 @@ class ToDoListViewController: UITableViewController {
  
  func saveItems() {
   
-  let encoder = PropertyListEncoder()
-  
   do{
-   let data = try encoder.encode(itemArray)
-   try data.write(to: dataFilePath!)
+   try context.save()
   } catch {
-   print("Error encoding item array, \(error)")
+   print("Error saving context \(error)")
   }
   
   self.tableView.reloadData()
  }
  
- 
- func loadItems(){
-  if let data = try? Data(contentsOf: dataFilePath!){
-   let decoder = PropertyListDecoder()
-   do {
-    itemArray = try decoder.decode([ItemModel].self, from: data)
-   } catch {
-    print("Error decoding item array, \(error)")
+ func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+
+  do {
+   itemArray = try context.fetch(request)
+  } catch{
+   print("Error loading context \(error)")
+  }
+ }
+}
+
+extension ToDoListViewController: UISearchBarDelegate{
+
+ func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+  
+   let request : NSFetchRequest<Item> = Item.fetchRequest()
+   
+   request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+   request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+   
+   loadItems(with: request)
+  
+  if searchBar.text?.count == 0{
+   loadItems()
+   DispatchQueue.main.async {
+    searchBar.resignFirstResponder()
    }
   }
-  
+  tableView.reloadData()
  }
-  
-  
 }
 

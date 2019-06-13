@@ -50,14 +50,28 @@ class ToDoListViewController: UITableViewController {
     
    itemArray[indexPath.row].done = !itemArray[indexPath.row].done
    
-//   //Code to Delete
-//   context.delete(itemArray[indexPath.row])
-//   itemArray.remove(at: indexPath.row)
+
   
    saveItems()
     
    tableView.deselectRow(at: indexPath, animated: true)
   }
+ 
+ override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+  
+  let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: { (ac: UIContextualAction, view: UIView, success:(Bool) -> Void) in
+   self.context.delete(self.itemArray[indexPath.row])
+   self.itemArray.remove(at: indexPath.row)
+   self.saveItems()
+   success(true)
+  })
+  
+  deleteAction.image = UIImage(named: "tick")
+  deleteAction.backgroundColor = .red
+  
+  return UISwipeActionsConfiguration(actions: [deleteAction])
+ }
+ 
   
   //MARK: Add To-Do Items
   

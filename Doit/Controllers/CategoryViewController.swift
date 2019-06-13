@@ -30,6 +30,7 @@ class CategoryViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
     cell.textLabel?.text = categoryArray[indexPath.row].name
+    
     return cell
   }
   
@@ -84,6 +85,32 @@ class CategoryViewController: UITableViewController {
       present(alert, animated: true, completion: nil)
   }
   
+  //MARK: - Swipe To Delete
+  override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    
+    let deleteAction = UIContextualAction(style: .normal, title: "Delete", handler: { (ac: UIContextualAction, view: UIView, success:@escaping (Bool) -> Void) in
+      
+      let deleteAlert = UIAlertController(title: "Delete Category", message: "Deleting this category also deletes it's assocaited items", preferredStyle: .alert)
+      
+      let deleteAlertAction = UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+        self.context.delete(self.categoryArray[indexPath.row])
+        self.categoryArray.remove(at: indexPath.row)
+        self.saveCategories()
+        success(true)
+      })
+      
+      deleteAlert.addAction(deleteAlertAction)
+      deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+      
+      self.present(deleteAlert, animated: true, completion: nil)
+      
+    })
+  
+    deleteAction.backgroundColor = .red
+    
+    return UISwipeActionsConfiguration(actions: [deleteAction])
+  }
+
   
   //MARK: - TableView Delegate Methods
   
@@ -91,7 +118,7 @@ class CategoryViewController: UITableViewController {
     performSegue(withIdentifier: "ItemView", sender: self)
     tableView.deselectRow(at: indexPath, animated: true)
   }
-  
+
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     let destinationVC = segue.destination as! ToDoListViewController
     
@@ -100,6 +127,7 @@ class CategoryViewController: UITableViewController {
     }
   }
   
+
   
   
 }

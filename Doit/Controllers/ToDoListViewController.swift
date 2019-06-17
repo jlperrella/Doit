@@ -24,7 +24,8 @@ class ToDoListViewController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
    
-   //   let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+//    var dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+//   print("file path \(dataFilePath)")
    
    loadItems()
   }
@@ -49,9 +50,7 @@ class ToDoListViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
    itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-   
-
-  
+ 
    saveItems()
     
    tableView.deselectRow(at: indexPath, animated: true)
@@ -80,7 +79,7 @@ class ToDoListViewController: UITableViewController {
     var textField = UITextField()
     let alert = UIAlertController(title: "Add Item", message: "", preferredStyle: .alert)
    
-   let action = UIAlertAction(title: "Add", style: .default) { (action) in
+    let action = UIAlertAction(title: "Add", style: .default) { (action) in
       if textField.text != ""{
       
        let newItem = Item(context: self.context)

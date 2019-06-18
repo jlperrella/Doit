@@ -8,6 +8,7 @@ use_frameworks!
   # Pods for Doit
 
 pod 'RealmSwift'
+pod 'SwipeCellKit'
 
 
 end

@@ -22,10 +22,7 @@ class ToDoListViewController: UITableViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-   
-//    var dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-//   print("file path \(dataFilePath)")
-   
+ 
    loadItems()
   }
   
@@ -50,12 +47,19 @@ class ToDoListViewController: UITableViewController {
   //MARK: Tabelview Delegate Methods
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
-//   itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-//
-//   saveItems()
    
+   if let item = items?[indexPath.row]{
+    do {
+     try realm.write {
+      //item.done = !item.done
+      realm.delete(item)
+     }
+    } catch{
+     print("Error saving done status \(error)")
+    }
+   }
    tableView.deselectRow(at: indexPath, animated: true)
+   tableView.reloadData()
   }
  
 // override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

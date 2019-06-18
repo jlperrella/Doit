@@ -51,8 +51,7 @@ class ToDoListViewController: UITableViewController {
    if let item = items?[indexPath.row]{
     do {
      try realm.write {
-      //item.done = !item.done
-      realm.delete(item)
+      item.done = !item.done
      }
     } catch{
      print("Error saving done status \(error)")
@@ -93,6 +92,7 @@ class ToDoListViewController: UITableViewController {
          try self.realm.write {
           let newItem = Item()
           newItem.title = textField.text!
+          newItem.dateCreated = Date()
           currentCategory.items.append(newItem)
          }
         }catch{
@@ -115,6 +115,7 @@ class ToDoListViewController: UITableViewController {
     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
     present(alert, animated: true, completion: nil)
   }
+
  
  
  //MARK: Data Manipulation Methods
@@ -134,32 +135,26 @@ class ToDoListViewController: UITableViewController {
  
  func loadItems(){
   
-  items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+    items = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
   
-  tableView.reloadData()
+    tableView.reloadData()
   
  }
 }
 
-//extension ToDoListViewController: UISearchBarDelegate{
-//
-// func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//
-//   let request : NSFetchRequest<Item> = Item.fetchRequest()
-//
-//   let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//
-//   request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//   loadItems(with: request, predicate: predicate)
-//
-//  if searchBar.text?.count == 0{
-//   loadItems()
-//   DispatchQueue.main.async {
-//    searchBar.resignFirstResponder()
-//   }
-//  }
-//  tableView.reloadData()
-// }
-//}
+extension ToDoListViewController: UISearchBarDelegate{
+
+ func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+  
+    if searchBar.text?.count == 0{
+      loadItems()
+      DispatchQueue.main.async {
+        searchBar.resignFirstResponder()
+      }
+    }
+  
+    tableView.reloadData()
+   }
+ }
 

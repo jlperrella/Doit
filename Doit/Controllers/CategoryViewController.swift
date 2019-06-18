@@ -31,9 +31,10 @@ class CategoryViewController: UITableViewController {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
     cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
     
+    
     return cell
   }
-  
+
   
   //MARK: - Data Manipulation
   
@@ -126,9 +127,5 @@ class CategoryViewController: UITableViewController {
       destinationVC.selectedCategory = categories?[indexPath.row]
     }
   }
-  
-
-  
-  
 }
 
